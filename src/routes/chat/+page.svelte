@@ -2,13 +2,7 @@
 	import { onMount } from 'svelte';
 	/* import NoSleep from 'nosleep.js'; */
 
-	let info:string = 'test';
-
-	onMount(async() => {
-		/* const noSleep = new NoSleep();
-		noSleep.enable();
-		return () => noSleep.disable(); */
-
+	const wakeLock = async() => {
 		if ('wakeLock' in navigator) {
 			const wakeLock = await navigator.wakeLock.request("screen");
 			info = 'Wake Lock is active!';
@@ -18,6 +12,17 @@
 			info = 'Wake Lock API not supported by this browser.';
 			console.log('Wake Lock API not supported by this browser.');
 		}
+	}
+
+	let info:string = 'test';
+
+	onMount(() => {
+
+		wakeLock();
+		/* const noSleep = new NoSleep();
+		noSleep.enable();
+		return () => noSleep.disable(); */
+
 	});
 
 	export let data;
