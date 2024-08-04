@@ -1,37 +1,52 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import NoSleep from 'nosleep.js';
+
+	let test = 'WF🔴';
 	onMount(() => {
-
 		const noSleep = new NoSleep();
-		noSleep.enable();
-		return () => noSleep.disable();
 
+		setInterval(() => {
+			if (noSleep.isEnabled) {
+				test = 'WF🟢';
+			} else {
+				test = 'WF🔴';
+			}
+		}, 500);
+
+		document.addEventListener(
+			'click',
+			function enableNoSleep() {
+				document.removeEventListener('click', enableNoSleep, false);
+				noSleep.enable();
+			},
+			false
+		);
+		return () => noSleep.disable();
 	});
 
 	export let data;
 
 	const { params, hostname } = data;
-
 </script>
 
-<!-- <video
-	playsinline
-	muted
-	autoplay
-	loop
-	src="https://rawgit.com/bower-media-samples/big-buck-bunny-480p-30s/master/video.mp4"
-	height="60"
-></video> -->
-
 <main>
-	<iframe src={`https://www.youtube.com/live_chat?v=${params.v}&embed_domain=${hostname}`}></iframe>
+	<div class="status">{test}</div>
+	<iframe
+		title="yt-chat"
+		src={`https://www.youtube.com/live_chat?v=${params.v}&embed_domain=${hostname}`}
+	></iframe>
 </main>
 
 <style lang="scss">
+	.status {
+		position: fixed;
+		left: 50%;
+		transform: translateX(-50%);
+	}
 	iframe {
 		all: unset;
 		width: 100%;
-		height: 95vh;
+		height: 86vh;
 	}
 </style>

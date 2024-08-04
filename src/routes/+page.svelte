@@ -3,19 +3,18 @@
 
 	export let data: PageData;
 	const { liveVideos } = data;
-
-	const redirectToUrl = (url: string) => () => {
-		window.location.href = url;
-	};
 </script>
 
 <main>
 	<div class="container">
+		{#if liveVideos.length === 0}
+			<h1>No live videos currently!</h1>
+		{/if}
 		{#each liveVideos as video}
-			<div on:click={redirectToUrl(`/chat?v=${video.videoId}`)} class="card">
+			<a href={`/chat?v=${video.videoId}`} class="card">
 				<img src={video.thumbnail} alt={video.title} />
 				<h2>{video.title}</h2>
-			</div>
+			</a>
 		{/each}
 	</div>
 </main>

@@ -7,7 +7,7 @@ export const load: PageServerLoad = async () => {
 		const channelId = process.env.YOUTUBE_CHANNEL_ID;
 		const liveVideos = await getLiveVideos(channelId);
 		return { liveVideos };
-	} catch (err: any) {
-		error(404, err.message);
+	} catch (err) {
+		error(404, (err as Error).message);
 	}
 };
