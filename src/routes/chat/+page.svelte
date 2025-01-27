@@ -2,15 +2,15 @@
 	import { onMount } from 'svelte';
 	import NoSleep from 'nosleep.js';
 
-	let test = 'WF🔴';
+	let wlStatus:'🔴' | '🟢' = '🔴';
 	onMount(() => {
 		const noSleep = new NoSleep();
 
 		setInterval(() => {
 			if (noSleep.isEnabled) {
-				test = 'WF🟢';
+				wlStatus = '🟢';
 			} else {
-				test = 'WF🔴';
+				wlStatus = '🔴';
 			}
 		}, 500);
 
@@ -31,7 +31,7 @@
 </script>
 
 <main>
-	<div class="status">{test}</div>
+	<div class="status">WL{wlStatus}</div>
 	<iframe
 		title="yt-chat"
 		src={`https://www.youtube.com/live_chat?v=${params.v}&embed_domain=${hostname}`}
