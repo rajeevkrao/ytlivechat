@@ -9,22 +9,29 @@ export async function getLiveVideos(channelId: string) {
 	});
 
 	try {
-		const response = await youtube.search.list({
+		const streamingVideos = await youtube.search.list({
 			part: 'snippet',
 			channelId: channelId,
 			eventType: 'live',
 			type: 'video'
 		});
 
-		const data = response.data;
+		const upcomingVideos = await youtube.search.list({
+			part: 'snippet',
+			channelId: channelId,
+			eventType: 'upcoming',
+			type: 'video'
+		});
 
-		if (!data.items.length) {
+		// Combine live and upcoming videos
+		const data = [...streamingVideos.data.items, ...upcomingVideos.data.items];
+
+		if (!data.length) {
 			console.log('No live videos currently.');
 			return [];
 		}
 
-		const liveVideos = data.items.map((video: any) => {
-
+		const liveVideos = data.map((video: any) => {
 			return {
 				thumbnail: video.snippet.thumbnails.default.url,
 				title: video.snippet.title,
