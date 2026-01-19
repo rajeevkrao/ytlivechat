@@ -1,8 +1,12 @@
+import type { RequestHandler } from '@sveltejs/kit';
 import { google } from 'googleapis';
 
 const apiKey = process.env.GOOGLE_API_KEY;
 
-export async function getLiveVideos(channelId: string) {
+export const GET: RequestHandler = async ({ url }) => {
+	const searchParams = url.searchParams;
+	const query = searchParams.get('q');
+
 	const youtube = google.youtube({
 		version: 'v3',
 		auth: apiKey
@@ -11,14 +15,14 @@ export async function getLiveVideos(channelId: string) {
 	try {
 		const streamingVideos = await youtube.search.list({
 			part: 'snippet',
-			channelId: channelId,
+			q: query,
 			eventType: 'live',
 			type: 'video'
 		});
 
 		const upcomingVideos = await youtube.search.list({
 			part: 'snippet',
-			channelId: channelId,
+			q: query,
 			eventType: 'upcoming',
 			type: 'video'
 		});
@@ -27,7 +31,7 @@ export async function getLiveVideos(channelId: string) {
 		const data = [...streamingVideos.data.items, ...upcomingVideos.data.items];
 
 		if (!data.length) {
-			//No live videos currently
+			// No live Videos
 			return [];
 		}
 
@@ -40,9 +44,8 @@ export async function getLiveVideos(channelId: string) {
 				liveChatUrl: `https://www.youtube.com/live_chat?is_popout=1&v=${video.id.videoId}`
 			};
 		});
-
-		return liveVideos;
+		return Response.json(liveVideos);
 	} catch (error) {
-		console.error('Error fetching live videos:', error);
+		return new Response('Error Loading Live Streams', { status: 500 });
 	}
-}
+};
